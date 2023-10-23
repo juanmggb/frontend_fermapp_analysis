@@ -38,7 +38,9 @@ function Header() {
     <Navbar bg="light" expand="lg">
       <Container>
         <LinkContainer to="/">
-          <Navbar.Brand>GAFerm</Navbar.Brand>
+          <Navbar.Brand style={{ color: "white !important" }}>
+            GAFerm
+          </Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">

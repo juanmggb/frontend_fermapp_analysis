@@ -12,13 +12,13 @@ const ContainerStyled = styled.div`
 `;
 
 const SidebarStyled = styled.div`
-  background-color: red;
+  background-color: #00aeff;
   flex: 1;
   min-width: 300px;
 `;
 
 const MainPanelStyled = styled.div`
-  background-color: #209c10;
+  background-color: #0a4490ee;
   flex: 2;
   min-width: 400px;
 `;

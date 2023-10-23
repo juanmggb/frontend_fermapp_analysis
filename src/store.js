@@ -19,15 +19,18 @@ const RESET_STORE = "RESET_STORE";
 
 // Define your individual reducers
 
+const token = JSON.parse(localStorage.getItem("token") || null);
+
 const initialState = {
   // Define the initial state for each reducer
-  simulationPlot: simulationPlotReducer(undefined, {}),
-  dataOpt: dataOptReducer(undefined, {}),
-  optParams: optParamsReducer(undefined, {}),
-  userList: userListReducer(undefined, {}),
-  createUser: createUserReducer(undefined, {}),
-  loginUser: loginUserReducer(undefined, {}),
-  updateUser: updateUserReducer(undefined, {}),
+  // simulationPlot: simulationPlotReducer(undefined, {}),
+  // dataOpt: dataOptReducer(undefined, {}),
+  // optParams: optParamsReducer(undefined, {}),
+  // userList: userListReducer(undefined, {}),
+  // createUser: createUserReducer(undefined, {}),
+  // loginUser: loginUserReducer(undefined, {}),
+  // updateUser: updateUserReducer(undefined, {}),
+  loginUser: { userInfo: token },
 };
 
 const rootReducer = combineReducers({
@@ -51,6 +54,7 @@ const mainReducer = (state, action) => {
 
 const store = createStore(
   mainReducer,
+  initialState,
   composeWithDevTools(applyMiddleware(thunk))
 );
 

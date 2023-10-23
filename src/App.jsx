@@ -51,6 +51,8 @@ function App() {
     }
   }, [userInfo]);
 
+  console.log(isAuthenticated, userInfo);
+
   return (
     <ContainerStyled>
       <Toaster />

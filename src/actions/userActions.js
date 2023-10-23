@@ -90,6 +90,8 @@ export const login = (credentials) => async (dispatch, getState) => {
     const { data } = await api.post("token/", credentials, config);
 
     dispatch({ type: SUCCESS_LOGIN_USER, payload: data });
+
+    localStorage.setItem("token", JSON.stringify(data.access));
   } catch (error) {
     dispatch({ type: FAIL_LOGIN_USER, payload: error.message });
   }
@@ -122,4 +124,5 @@ export const updateUser = (formData) => async (dispatch, getState) => {
 
 export const logout = () => async (dispatch, getState) => {
   dispatch({ type: RESET_STORE }); // Dispatch a single reset action
+  localStorage.clear();
 };
