@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import Plot from "react-plotly.js";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { Table } from "react-bootstrap";
+import { ExperimentalDataContext } from "../../lib/contexts/ExperimentalDataContext";
+// import { Table } from "react-bootstrap";
 
 const MainPanelContainerStyled = styled.div`
   display: flex;
@@ -29,51 +30,51 @@ const PlotContainerStyled = styled.div`
   text-align: center;
 `;
 
-const ResultsContainerStyled = styled.div`
-  flex: 1;
-  /* width: 800px; */
-  min-width: 80%;
-  max-width: 90%;
-  height: 500px;
-  text-align: center;
+// const ResultsContainerStyled = styled.div`
+//   flex: 1;
+//   /* width: 800px; */
+//   min-width: 80%;
+//   max-width: 90%;
+//   height: 500px;
+//   text-align: center;
 
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  height: 100%;
-`;
+//   display: flex;
+//   flex-direction: row;
+//   flex-wrap: wrap;
+//   justify-content: center;
+//   height: 100%;
+// `;
 
-const IframeStyled = styled.iframe`
-  width: 60%;
+// const IframeStyled = styled.iframe`
+//   width: 60%;
 
-  @media (max-width: 1580px) {
-    width: 90%;
-  }
-`;
+//   @media (max-width: 1580px) {
+//     width: 90%;
+//   }
+// `;
 
-const TableStyled = styled.table`
-  width: 30%;
-  min-width: 300px;
-  border-collapse: collapse;
-  margin-top: 20px;
-  margin-left: 30px;
+// const TableStyled = styled.table`
+//   width: 30%;
+//   min-width: 300px;
+//   border-collapse: collapse;
+//   margin-top: 20px;
+//   margin-left: 30px;
 
-  th,
-  td {
-    border: 1px solid #ccc;
-    padding: 8px;
-  }
+//   th,
+//   td {
+//     border: 1px solid #ccc;
+//     padding: 8px;
+//   }
 
-  th {
-    /* background-color: #f2f2f2; */
-    font-weight: bold;
-  }
+//   th {
+//     /* background-color: #f2f2f2; */
+//     font-weight: bold;
+//   }
 
-  tr:nth-child(even) {
-    /* background-color: #f9f9f9; */
-  }
-`;
+//   tr:nth-child(even) {
+//     /* background-color: #f9f9f9; */
+//   }
+// `;
 
 // Constants
 
@@ -87,69 +88,49 @@ const LAYOUT = {
   },
 };
 
-const BEST_PARAMS_NAMES = ["mu_max", "Y", "Yp", "Ks"];
+// const BEST_PARAMS_NAMES = ["mu_max", "Y", "Yp", "Ks"];
 
 function MainPanelOptimization() {
-  const dataOpt = useSelector((state) => state.dataOpt);
-  const { error: dataOptError, data, loading: dataOptLoading } = dataOpt;
+  const { experiemntalData } = useContext(ExperimentalDataContext);
 
-  const optParams = useSelector((state) => state.optParams);
-  const {
-    error: optParamsError,
-    data: dataOptParams,
-    loading: optParamsLoading,
-  } = optParams;
+  // const optParams = useSelector((state) => state.optParams);
+  // const {
+  //   error: optParamsError,
+  //   data: dataOptParams,
+  //   loading: optParamsLoading,
+  // } = optParams;
 
   const [plotData, setPlotData] = useState([]);
-  const [plotUrl, setPlotUrl] = useState("");
-  const [bestParams, setBestParams] = useState([]);
+  // const [plotUrl, setPlotUrl] = useState("");
+  // const [bestParams, setBestParams] = useState([]);
 
   // const [tableData, setTableData] = useState(null);
 
-  useEffect(() => {
-    if (dataOptLoading) {
-      // Loading toast (useful for async operations)
-      toast.loading("Loading data");
-    }
+  // useEffect(() => {
+  //   if (optParamsLoading) {
+  //     // Loading toast (useful for async operations)
+  //     toast.loading("Performing optimization");
+  //   }
 
-    if (dataOptError) {
-      toast.dismiss();
-      toast.error("Error during loading data");
-    }
+  //   if (optParamsError) {
+  //     toast.dismiss();
+  //     toast.error("Error during optimization");
+  //   }
 
-    if (data) {
-      toast.remove();
-      setPlotData(getPlotData(data));
-      // setTableData(getTableData(data));
-    }
-  }, [dataOptError, dataOptLoading, data]);
+  // if (dataOptParams) {
+  //   toast.remove();
+  //   setPlotUrl(dataOptParams.optimization_url);
+  //   setBestParams(getBestParams(dataOptParams.best_params));
+  // }
+  // }, [optParamsError, optParamsLoading, dataOptParams]);
 
-  useEffect(() => {
-    if (optParamsLoading) {
-      // Loading toast (useful for async operations)
-      toast.loading("Performing optimization");
-    }
-
-    if (optParamsError) {
-      toast.dismiss();
-      toast.error("Error during optimization");
-    }
-
-    if (dataOptParams) {
-      toast.remove();
-      setPlotUrl(dataOptParams.optimization_url);
-      setBestParams(getBestParams(dataOptParams.best_params));
-    }
-  }, [optParamsError, optParamsLoading, dataOptParams]);
-
-  console.log(bestParams);
   return (
     <MainPanelContainerStyled>
       <PlotContainerStyled>
         <Plot data={plotData} layout={LAYOUT} />
       </PlotContainerStyled>
 
-      {plotUrl && (
+      {/* {plotUrl && (
         <ResultsContainerStyled>
           <IframeStyled
             src={plotUrl}
@@ -174,7 +155,7 @@ function MainPanelOptimization() {
             </tbody>
           </TableStyled>
         </ResultsContainerStyled>
-      )}
+      )} */}
     </MainPanelContainerStyled>
   );
 }
@@ -210,11 +191,11 @@ const getPlotData = (data) => {
   return plotData;
 };
 
-const getBestParams = (bestParams) => {
-  const newBestParams = bestParams.map((p) => p.toFixed(3));
+// const getBestParams = (bestParams) => {
+//   const newBestParams = bestParams.map((p) => p.toFixed(3));
 
-  return newBestParams;
-};
+//   return newBestParams;
+// };
 
 export default MainPanelOptimization;
 

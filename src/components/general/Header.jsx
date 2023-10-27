@@ -5,9 +5,7 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { useSelector } from "react-redux";
 import { LinkContainer } from "react-router-bootstrap";
-
-// CONSTANTS
-const baseUrl = "http://127.0.0.1:8000";
+import { BASE_URL } from "../../constants/constants";
 
 function Header() {
   const loginUser = useSelector((state) => state.loginUser);
@@ -77,33 +75,12 @@ function Header() {
                   </NavDropdown.Item>
                 </NavDropdown>
 
-                <NavDropdown title="ANN" id="ann">
-                  <LinkContainer to="/ann">
-                    <NavDropdown.Item>Bioreactor</NavDropdown.Item>
-                  </LinkContainer>
-
-                  <NavDropdown.Item href="#action/3.4">
-                    Media composition
-                  </NavDropdown.Item>
-                </NavDropdown>
-
                 <NavDropdown title="Users" id="users">
                   <LinkContainer to="/users">
                     <NavDropdown.Item>Users</NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to="/create-user">
                     <NavDropdown.Item>Create User</NavDropdown.Item>
-                  </LinkContainer>
-                </NavDropdown>
-
-                <NavDropdown title="Kinetic Parameters" id="users">
-                  <LinkContainer to="/parameters">
-                    <NavDropdown.Item>Kinetic Parameters</NavDropdown.Item>
-                  </LinkContainer>
-                  <LinkContainer to="/register-parameters">
-                    <NavDropdown.Item>
-                      Register Kinetic Parameters
-                    </NavDropdown.Item>
                   </LinkContainer>
                 </NavDropdown>
               </>
@@ -116,7 +93,7 @@ function Header() {
               <LinkContainer to="/account">
                 <Nav.Link>
                   <img
-                    src={`${baseUrl}${imageUrl}`}
+                    src={`${BASE_URL}${imageUrl}`}
                     alt="Account"
                     width={32}
                     height={32}

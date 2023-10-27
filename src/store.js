@@ -2,11 +2,8 @@ import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 
-import { simulationPlotReducer } from "./reducers/simulationReducers";
-import {
-  dataOptReducer,
-  optParamsReducer,
-} from "./reducers/optimizationReducers";
+import { simulationDataReducer } from "./reducers/simulationReducers";
+import { optParamsReducer } from "./reducers/optimizationReducers";
 import {
   userListReducer,
   createUserReducer,
@@ -23,7 +20,7 @@ const token = JSON.parse(localStorage.getItem("token") || null);
 
 const initialState = {
   // Define the initial state for each reducer
-  // simulationPlot: simulationPlotReducer(undefined, {}),
+
   // dataOpt: dataOptReducer(undefined, {}),
   // optParams: optParamsReducer(undefined, {}),
   // userList: userListReducer(undefined, {}),
@@ -35,8 +32,7 @@ const initialState = {
 
 const rootReducer = combineReducers({
   // Pass each reducer with their initial state
-  simulationPlot: simulationPlotReducer,
-  dataOpt: dataOptReducer,
+  simulationData: simulationDataReducer,
   optParams: optParamsReducer,
   userList: userListReducer,
   createUser: createUserReducer,

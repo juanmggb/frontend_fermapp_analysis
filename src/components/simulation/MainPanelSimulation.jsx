@@ -1,58 +1,98 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import Plot from "react-plotly.js";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { toast } from "react-hot-toast";
+// import { Table } from "react-bootstrap";
 
 const MainPanelContainerStyled = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 20px;
-  height: 100%;
-  padding-right: 0;
+  /* margin: 0px; */
+  /* height: 100%; */
+  padding: 10px;
+  max-width: 100%;
 `;
 
-const PlotFrameStyled = styled.iframe`
-  border: none;
-  border-radius: 10px;
-  margin-bottom: 20px;
+// const TableDataStyled = styled(Table)`
+//   width: 50%;
+// `;
+
+const PlotContainerStyled = styled.div`
+  flex: 1;
+  /* width: 800px; */
+  min-width: 80%;
   max-width: 100%;
-  width: 100%; // Add this
-  min-height: 500px;
-  height: 100%;
-  margin-right: 0;
+  height: 500px;
+  text-align: center;
 `;
+
+const LAYOUT = {
+  title: "Simulation Data",
+  xaxis: {
+    title: "Time (h)",
+  },
+  yaxis: {
+    title: "Concentration (g/L)",
+  },
+};
 
 function MainPanel() {
-  const simulationPlot = useSelector((state) => state.simulationPlot);
-  const { loading: plotLoading, plot, error: plotError } = simulationPlot;
+  const simulationData = useSelector((state) => state.simulationData);
+  const { loading, simulation, error } = simulationData;
 
-  const [plotUrl, setPlotUrl] = useState("");
+  const [plotData, setPlotData] = useState([]);
 
   useEffect(() => {
-    if (plotLoading) {
+    if (loading) {
       // Loading toast (useful for async operations)
       toast.loading("Performing simulation");
     }
 
-    if (plotError) {
+    if (error) {
       toast.dismiss();
       toast.error("Error during simulation");
     }
 
-    if (plot) {
+    if (simulation) {
       toast.remove();
-      setPlotUrl(plot.simulation_url);
+      setPlotData([
+        {
+          x: simulation.time,
+          y: simulation.x,
+          type: "scatter",
+          mode: "lines",
+          name: "Biomass",
+          marker: { color: "blue" },
+        },
+        {
+          x: simulation.time,
+          y: simulation.s,
+          type: "scatter",
+          mode: "lines",
+          name: "Substrate",
+          marker: { color: "red" },
+        },
+        {
+          x: simulation.time,
+          y: simulation.p,
+          type: "scatter",
+          mode: "lines",
+          name: "Product",
+          marker: { color: "green" },
+        },
+      ]);
     }
-  }, [plotLoading, plotError, plot]);
+  }, [loading, error, simulation]);
 
-  return plotUrl ? (
+  return (
     <MainPanelContainerStyled>
-      <PlotFrameStyled src={plotUrl} />
+      <PlotContainerStyled>
+        <Plot data={plotData} layout={LAYOUT} />
+      </PlotContainerStyled>
     </MainPanelContainerStyled>
-  ) : (
-    <h1>There is no plot yet</h1>
   );
 }
 

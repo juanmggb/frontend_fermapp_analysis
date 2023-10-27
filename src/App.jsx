@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Simulation from "./pages/Simulation";
-import Header from "./components/Header";
+import Header from "./components/general/Header";
 import Optimization from "./pages/Optimization";
 import Visualization from "./pages/Visualization";
-import Ann from "./pages/Ann";
 import styled from "styled-components";
 import Users from "./pages/Users";
 import { Toaster } from "react-hot-toast";
@@ -69,7 +68,6 @@ function App() {
                 <Route path="/simulation" element={<Simulation />} />
                 <Route path="/optimization" element={<Optimization />} />
                 <Route path="/visualization" element={<Visualization />} />
-                <Route path="/ann" element={<Ann />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/create-user" element={<CreateUser />} />
               </>

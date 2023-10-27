@@ -8,11 +8,11 @@ import { Provider } from "react-redux";
 import { MathJaxContext } from "better-react-mathjax";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  <>
     <MathJaxContext>
       <Provider store={store}>
         <App />
       </Provider>
     </MathJaxContext>
-  </React.StrictMode>
+  </>
 );

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 // import SidebarSimulation from "../components/SidebarSimulation";
 // import MainPanel from "../components/MainPanelSimulation";
 
 import SidebarOptimization from "../components/optimization/SidebarOptimization";
 import MainPanelOptimization from "../components/optimization/MainPanelOptimization";
+import { ExperimentalDataContect } from "../lib/contexts/ExperimentalDataContext";
 
 const ContainerStyled = styled.div`
   height: 100vh;
@@ -32,15 +33,21 @@ const MainPanelStyled = styled.div`
 `;
 
 function Optimization() {
+  const [experimentalData, setExperimentalData] = useState([]);
+
   return (
     <ContainerStyled>
-      <SidebarStyled>
-        <SidebarOptimization />
-      </SidebarStyled>
+      <ExperimentalDataContect.Provider
+        value={{ experimentalData, setExperimentalData }}
+      >
+        <SidebarStyled>
+          <SidebarOptimization />
+        </SidebarStyled>
 
-      <MainPanelStyled>
-        <MainPanelOptimization />
-      </MainPanelStyled>
+        <MainPanelStyled>
+          <MainPanelOptimization />
+        </MainPanelStyled>
+      </ExperimentalDataContect.Provider>
     </ContainerStyled>
   );
 }

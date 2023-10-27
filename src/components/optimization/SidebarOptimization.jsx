@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { MathJax } from "better-react-mathjax";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import * as XLSX from "xlsx";
@@ -11,6 +11,9 @@ import {
   performOptParms,
   saveDataOpt,
 } from "../../actions/optimizationActions";
+import SimulationModelInputField from "../general/SimulationModelInputField";
+import { FormContext } from "../../lib/contexts/FormContext";
+import { ExperimentalDataContext } from "../../lib/contexts/ExperimentalDataContext";
 // Styles seccion ###############################################################################################
 const SidebarContainerStyled = styled.div`
   height: 100%;
@@ -55,60 +58,31 @@ const RangeValueStyled = styled.div`
   justify-content: space-between;
 `;
 
-// CONSTANTS ##########################################################################################
-
-const muValueMin = 0.01;
-const muValueDefault = 0.5;
-const muValueMax = 1;
-
-const yieldValueMin = 0.01;
-const yieldValueDefault = 0.5;
-const yieldValueMax = 1;
-
-const productYieldValueMin = 0.0;
-const productYieldValueDefault = 10;
-const productYieldValueMax = 20;
-
-const satConstValueMin = 10;
-const satConstValueDefault = 100;
-const satConstValueMax = 200;
-
 // Component #########################################################################################################
 function SidebarOptimization() {
-  const dispatch = useDispatch();
-
   // Get the plot state from redux store
+  const { setExperimentalData } = useContext(ExperimentalDataContext);
 
-  const dataOpt = useSelector((state) => state.dataOpt);
-
-  const { error: errorDataOpt, data, loading: loadingDataOpt } = dataOpt;
-
-  // Create kinetic parameter states
-  const {
-    muValue,
-    yieldValue,
-    productYieldValue,
-    satConstValue,
-    handleMuChange,
-    handleYieldChange,
-    handleProductYieldChange,
-    handleSatConstChange,
-  } = useKineticParams();
-
+  // Use useForm to perform validation in the form
   // Use useForm to perform validation in the form
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+    watch,
+  } = useForm({
+    defaultValues: {
+      model: "monod", //default model
+    },
+  });
 
   // Submit simulation input to perform the simulation
-  const onSubmit = () => {
+  const onSubmit = (data) => {
     // console.log(data);
     // dispatch(performSimulation(data));
     if (data) {
       console.log(data);
-      dispatch(performOptParms(data));
+      // dispatch(performOptParms(data));
     } else {
       alert("No data yet");
     }
@@ -131,7 +105,8 @@ function SidebarOptimization() {
         jsonData.s.push(row[3]);
       });
 
-      dispatch(saveDataOpt(jsonData));
+      // jsonData
+      setExperimentalData(jsonData);
     };
     reader.readAsBinaryString(file);
   };
@@ -143,101 +118,10 @@ function SidebarOptimization() {
           <Form.Label>Choose a file</Form.Label>
           <Form.Control type="file" onChange={handleFileChange} />
         </Form.Group>
-
-        <Form.Group className="mb-3" controlId="model">
-          <Form.Label>Select Model</Form.Label>
-          <Form.Select {...register("model")}>
-            <option>Monod Model</option>
-          </Form.Select>
-        </Form.Group>
-
-        <GroupInputStyled>
-          <InputFieldStyled controlId="mu">
-            <Form.Label>
-              <MathJax>{"\\(\\mu\\) (1/h)"}</MathJax>
-            </Form.Label>
-            <RangeValueStyled>
-              <span>{muValueMin}</span>
-              <span>{muValue}</span>
-              <span>{muValueMax}</span>
-            </RangeValueStyled>
-            <Form.Range
-              {...register("mu", {
-                valueAsNumber: true,
-              })}
-              min={muValueMin}
-              max={muValueMax}
-              step={0.01}
-              defaultValue={muValueDefault}
-              onChange={handleMuChange}
-            />
-          </InputFieldStyled>
-
-          <InputFieldStyled controlId="Y">
-            <Form.Label>
-              <MathJax>{"\\(Y\\) "}</MathJax>
-            </Form.Label>
-            <RangeValueStyled>
-              <span>{yieldValueMin}</span>
-              <span>{yieldValue}</span>
-              <span>{yieldValueMax}</span>
-            </RangeValueStyled>
-            <Form.Range
-              {...register("Y", {
-                valueAsNumber: true,
-              })}
-              min={yieldValueMin}
-              max={yieldValueMax}
-              step={0.01}
-              defaultValue={yieldValueDefault}
-              onChange={handleYieldChange}
-            />
-          </InputFieldStyled>
-
-          <InputFieldStyled controlId="Yp">
-            <Form.Label>
-              {" "}
-              <MathJax>{"\\(Y_p\\) "}</MathJax>
-            </Form.Label>
-
-            <RangeValueStyled>
-              <span>{productYieldValueMin}</span>
-              <span>{productYieldValue}</span>
-              <span>{productYieldValueMax}</span>
-            </RangeValueStyled>
-            <Form.Range
-              {...register("Yp", {
-                valueAsNumber: true,
-              })}
-              min={productYieldValueMin}
-              max={productYieldValueMax}
-              step={1}
-              defaultValue={productYieldValueDefault}
-              onChange={handleProductYieldChange}
-            />
-          </InputFieldStyled>
-
-          <InputFieldStyled controlId="Ks">
-            <Form.Label>
-              <MathJax>{"\\(K_s\\) (g/L)"}</MathJax>
-            </Form.Label>
-            <RangeValueStyled>
-              <span>{satConstValueMin}</span>
-              <span>{satConstValue}</span>
-              <span>{satConstValueMax}</span>
-            </RangeValueStyled>
-            <Form.Range
-              {...register("Ks", {
-                valueAsNumber: true,
-              })}
-              min={satConstValueMin}
-              max={satConstValueMax}
-              step={1}
-              defaultValue={satConstValueDefault}
-              onChange={handleSatConstChange}
-            />
-          </InputFieldStyled>
-        </GroupInputStyled>
+        <FormContext.Provider value={{ register }}>
+          {/* Simulation model */}
+          <SimulationModelInputField />
+        </FormContext.Provider>
 
         <GroupInputStyled>
           <Button variant="primary" type="submit">
@@ -248,41 +132,5 @@ function SidebarOptimization() {
     </SidebarContainerStyled>
   );
 }
-
-const useKineticParams = () => {
-  const [muValue, setMuValue] = useState(muValueDefault);
-  const [yieldValue, setYieldValue] = useState(yieldValueDefault);
-  const [productYieldValue, setProductYieldValue] = useState(
-    productYieldValueDefault
-  );
-  const [satConstValue, setSatConstValue] = useState(satConstValueDefault);
-
-  const handleMuChange = (e) => {
-    setMuValue(e.target.value);
-  };
-
-  const handleYieldChange = (e) => {
-    setYieldValue(e.target.value);
-  };
-
-  const handleProductYieldChange = (e) => {
-    setProductYieldValue(e.target.value);
-  };
-
-  const handleSatConstChange = (e) => {
-    setSatConstValue(e.target.value);
-  };
-
-  return {
-    muValue,
-    yieldValue,
-    productYieldValue,
-    satConstValue,
-    handleMuChange,
-    handleYieldChange,
-    handleProductYieldChange,
-    handleSatConstChange,
-  };
-};
 
 export default SidebarOptimization;

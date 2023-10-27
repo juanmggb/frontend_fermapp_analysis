@@ -5,13 +5,13 @@ import {
   SUCCESS_PLOT_SIMULATION,
 } from "../constants/simulationConstants";
 
-export const simulationPlotReducer = (state = {}, action) => {
+export const simulationDataReducer = (state = {}, action) => {
   switch (action.type) {
     case REQUEST_PLOT_SIMULATION:
       return { loading: true };
 
     case SUCCESS_PLOT_SIMULATION:
-      return { loading: false, plot: action.payload };
+      return { loading: false, simulation: action.payload };
 
     case FAIL_PLOT_SIMULATION:
       return { loading: false, error: action.payload };

@@ -8,19 +8,13 @@ import {
   REQUEST_LOGIN_USER,
   REQUEST_UPDATE_USER,
   REQUEST_USER_LIST,
-  RESET_CREATE_USER,
-  RESET_LOGIN_USER,
   RESET_USER_LIST,
   SUCCESS_CREATE_USER,
   SUCCESS_LOGIN_USER,
   SUCCESS_UPDATE_USER,
   SUCCESS_USER_LIST,
 } from "../constants/userConstants";
-import { RESET_PLOT_SIMULATION } from "../constants/simulationConstants";
-import {
-  RESET_OPT_DATA,
-  RESET_OPT_PARMS,
-} from "../constants/optimizationConstants";
+
 import { RESET_STORE } from "../constants/storeConstants";
 
 const api = axios.create({
