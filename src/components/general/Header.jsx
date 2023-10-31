@@ -58,21 +58,18 @@ function Header() {
                 </LinkContainer>
 
                 <NavDropdown title="Optimization" id="optimization">
-                  <LinkContainer to="/optimization">
+                  <LinkContainer to="/parameter-optimization">
                     <NavDropdown.Item>Bioreactor</NavDropdown.Item>
                   </LinkContainer>
-                  <NavDropdown.Item href="#action/3.2">
-                    Media composition
-                  </NavDropdown.Item>
+                  <LinkContainer to="/media-optimization">
+                    <NavDropdown.Item>Media composition</NavDropdown.Item>
+                  </LinkContainer>
                 </NavDropdown>
 
-                <NavDropdown title="Visualization" id="visualization">
-                  <LinkContainer to="/visualization">
-                    <NavDropdown.Item>Bioreactor</NavDropdown.Item>
+                <NavDropdown title="Analysis" id="analysis">
+                  <LinkContainer to="/analysis">
+                    <NavDropdown.Item>Analysis</NavDropdown.Item>
                   </LinkContainer>
-                  <NavDropdown.Item href="#action/3.3">
-                    Media Composition
-                  </NavDropdown.Item>
                 </NavDropdown>
 
                 <NavDropdown title="Users" id="users">

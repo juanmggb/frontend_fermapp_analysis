@@ -3,7 +3,10 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 import { simulationDataReducer } from "./reducers/simulationReducers";
-import { optParamsReducer } from "./reducers/optimizationReducers";
+import {
+  parameterOptimizationReducer,
+  mediaCompOptimizationReducer,
+} from "./reducers/optimizationReducers";
 import {
   userListReducer,
   createUserReducer,
@@ -31,9 +34,14 @@ const initialState = {
 };
 
 const rootReducer = combineReducers({
-  // Pass each reducer with their initial state
+  // Simulation
   simulationData: simulationDataReducer,
-  optParams: optParamsReducer,
+
+  // Parameter optimization
+  parameterOptimization: parameterOptimizationReducer,
+
+  // Media composition optimization
+  mediaCompOptimization: mediaCompOptimizationReducer,
   userList: userListReducer,
   createUser: createUserReducer,
   loginUser: loginUserReducer,

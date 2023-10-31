@@ -3,8 +3,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Simulation from "./pages/Simulation";
 import Header from "./components/general/Header";
-import Optimization from "./pages/Optimization";
-import Visualization from "./pages/Visualization";
 import styled from "styled-components";
 import Users from "./pages/Users";
 import { Toaster } from "react-hot-toast";
@@ -12,6 +10,8 @@ import CreateUser from "./pages/CreateUser";
 import Login from "./pages/Login";
 import { useSelector } from "react-redux";
 import Account from "./pages/Account";
+import MediaCompositionOptimization from "./pages/MediaCompositionOptimization";
+import ParameterOptimization from "./pages/ParameterOptimization";
 
 const ContainerStyled = styled.div`
   display: grid;
@@ -50,8 +50,6 @@ function App() {
     }
   }, [userInfo]);
 
-  console.log(isAuthenticated, userInfo);
-
   return (
     <ContainerStyled>
       <Toaster />
@@ -66,8 +64,14 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="/simulation" element={<Simulation />} />
-                <Route path="/optimization" element={<Optimization />} />
-                <Route path="/visualization" element={<Visualization />} />
+                <Route
+                  path="/parameter-optimization"
+                  element={<ParameterOptimization />}
+                />
+                <Route
+                  path="/media-optimization"
+                  element={<MediaCompositionOptimization />}
+                />
                 <Route path="/users" element={<Users />} />
                 <Route path="/create-user" element={<CreateUser />} />
               </>

@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import Plot from "react-plotly.js";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { Button } from "react-bootstrap";
 // import { Table } from "react-bootstrap";
 
 const MainPanelContainerStyled = styled.div`
@@ -39,7 +40,7 @@ const LAYOUT = {
   },
 };
 
-function MainPanel() {
+function MainPanelSimulation() {
   const simulationData = useSelector((state) => state.simulationData);
   const { loading, simulation, error } = simulationData;
 
@@ -96,4 +97,4 @@ function MainPanel() {
   );
 }
 
-export default MainPanel;
+export default MainPanelSimulation;

@@ -5,7 +5,6 @@ import styled from "styled-components";
 
 import SidebarOptimization from "../components/optimization/SidebarOptimization";
 import MainPanelOptimization from "../components/optimization/MainPanelOptimization";
-import { ExperimentalDataContect } from "../lib/contexts/ExperimentalDataContext";
 
 const ContainerStyled = styled.div`
   height: 100vh;
@@ -32,24 +31,25 @@ const MainPanelStyled = styled.div`
   /* height: 100%; */
 `;
 
-function Optimization() {
-  const [experimentalData, setExperimentalData] = useState([]);
+function ParameterOptimization() {
+  const [experimentalData, setExperimentalData] = useState(
+    JSON.parse(localStorage.getItem("experimentalData")) || {}
+  );
 
   return (
     <ContainerStyled>
-      <ExperimentalDataContect.Provider
-        value={{ experimentalData, setExperimentalData }}
-      >
-        <SidebarStyled>
-          <SidebarOptimization />
-        </SidebarStyled>
+      <SidebarStyled>
+        <SidebarOptimization
+          experimentalData={experimentalData}
+          setExperimentalData={setExperimentalData}
+        />
+      </SidebarStyled>
 
-        <MainPanelStyled>
-          <MainPanelOptimization />
-        </MainPanelStyled>
-      </ExperimentalDataContect.Provider>
+      <MainPanelStyled>
+        <MainPanelOptimization experimentalData={experimentalData} />
+      </MainPanelStyled>
     </ContainerStyled>
   );
 }
 
-export default Optimization;
+export default ParameterOptimization;

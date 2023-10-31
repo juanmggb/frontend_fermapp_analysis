@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { performSimulation } from "../../actions/simulationActions";
 import { toast } from "react-hot-toast";
 import InitialConcentrationInputFields from "./InitialConcentrationInputFields";
@@ -37,6 +37,9 @@ const FormStyled = styled(Form)`
 // Component #########################################################################################################
 function SidebarSimulation() {
   const dispatch = useDispatch();
+
+  const simulationData = useSelector((state) => state.simulationData);
+  const { loading, simulation, error } = simulationData;
 
   // Use useForm to perform validation in the form
   const {
@@ -76,6 +79,11 @@ function SidebarSimulation() {
   // Submit simulation input to perform the simulation
   const onSubmit = (data) => {
     console.log(data);
+    if (data.model === "monod") {
+      delete data.Ki;
+    }
+
+    console.log(data);
     dispatch(performSimulation(data));
   };
 
@@ -103,9 +111,46 @@ function SidebarSimulation() {
         <Button variant="primary" type="submit">
           Submit
         </Button>
+        {simulation && (
+          <Button
+            className="btn btn-primary"
+            onClick={() =>
+              downloadCSV(convertToCSV(simulation), "simulation.csv")
+            }
+          >
+            Download CSV
+          </Button>
+        )}
       </FormStyled>
     </SidebarContainerStyled>
   );
 }
 
 export default SidebarSimulation;
+
+const convertToCSV = (simulation) => {
+  const headers = ["Time(h)", "Biomass(g/L)", "Substrate(g/L)", "Product(g/L)"];
+  const rows = simulation.time.map((_, idx) => [
+    simulation.time[idx],
+    simulation.x[idx],
+    simulation.s[idx],
+    simulation.p[idx],
+  ]);
+
+  const csvContent =
+    headers.join(",") + "\n" + rows.map((e) => e.join(",")).join("\n");
+
+  return csvContent;
+};
+
+const downloadCSV = (csvContent, fileName) => {
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+  link.setAttribute("download", fileName);
+  link.style.visibility = "hidden";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};

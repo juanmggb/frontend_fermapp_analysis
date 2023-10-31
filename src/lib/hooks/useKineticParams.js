@@ -7,7 +7,7 @@ import {
   satConstDefaultValue,
 } from "../../constants/kineticParamConstants";
 
-export const useKineticParams = () => {
+export const useKineticParamsSimulation = () => {
   const [kineticParams, setKineticParams] = useState({
     muValue: muDefaultValue,
     biomassYieldValue: biomassYieldDefaultValue,

@@ -1,11 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { toast } from "react-hot-toast";
 import Plot from "react-plotly.js";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { ExperimentalDataContext } from "../../lib/contexts/ExperimentalDataContext";
-// import { Table } from "react-bootstrap";
-
 const MainPanelContainerStyled = styled.div`
   display: flex;
   flex-direction: column;
@@ -17,10 +14,6 @@ const MainPanelContainerStyled = styled.div`
   max-width: 100%;
 `;
 
-// const TableDataStyled = styled(Table)`
-//   width: 50%;
-// `;
-
 const PlotContainerStyled = styled.div`
   flex: 1;
   /* width: 800px; */
@@ -29,54 +22,6 @@ const PlotContainerStyled = styled.div`
   height: 500px;
   text-align: center;
 `;
-
-// const ResultsContainerStyled = styled.div`
-//   flex: 1;
-//   /* width: 800px; */
-//   min-width: 80%;
-//   max-width: 90%;
-//   height: 500px;
-//   text-align: center;
-
-//   display: flex;
-//   flex-direction: row;
-//   flex-wrap: wrap;
-//   justify-content: center;
-//   height: 100%;
-// `;
-
-// const IframeStyled = styled.iframe`
-//   width: 60%;
-
-//   @media (max-width: 1580px) {
-//     width: 90%;
-//   }
-// `;
-
-// const TableStyled = styled.table`
-//   width: 30%;
-//   min-width: 300px;
-//   border-collapse: collapse;
-//   margin-top: 20px;
-//   margin-left: 30px;
-
-//   th,
-//   td {
-//     border: 1px solid #ccc;
-//     padding: 8px;
-//   }
-
-//   th {
-//     /* background-color: #f2f2f2; */
-//     font-weight: bold;
-//   }
-
-//   tr:nth-child(even) {
-//     /* background-color: #f9f9f9; */
-//   }
-// `;
-
-// Constants
 
 const LAYOUT = {
   title: "Experimental data",
@@ -88,79 +33,51 @@ const LAYOUT = {
   },
 };
 
-// const BEST_PARAMS_NAMES = ["mu_max", "Y", "Yp", "Ks"];
+function MainPanelOptimization({ experimentalData }) {
+  const parameterOptimization = useSelector(
+    (state) => state.parameterOptimization
+  );
+  const { loading, simulatedData, model_type, error } = parameterOptimization;
 
-function MainPanelOptimization() {
-  const { experiemntalData } = useContext(ExperimentalDataContext);
+  useEffect(() => {
+    let toastId;
+    if (loading) {
+      toastId = toast.loading("Peforming parameter estimation");
+    }
 
-  // const optParams = useSelector((state) => state.optParams);
-  // const {
-  //   error: optParamsError,
-  //   data: dataOptParams,
-  //   loading: optParamsLoading,
-  // } = optParams;
+    if (error) {
+      toast.dismiss(toastId);
+      toast.error("An error ocurred when performing paramter estimation");
+    }
 
-  const [plotData, setPlotData] = useState([]);
-  // const [plotUrl, setPlotUrl] = useState("");
-  // const [bestParams, setBestParams] = useState([]);
-
-  // const [tableData, setTableData] = useState(null);
-
-  // useEffect(() => {
-  //   if (optParamsLoading) {
-  //     // Loading toast (useful for async operations)
-  //     toast.loading("Performing optimization");
-  //   }
-
-  //   if (optParamsError) {
-  //     toast.dismiss();
-  //     toast.error("Error during optimization");
-  //   }
-
-  // if (dataOptParams) {
-  //   toast.remove();
-  //   setPlotUrl(dataOptParams.optimization_url);
-  //   setBestParams(getBestParams(dataOptParams.best_params));
-  // }
-  // }, [optParamsError, optParamsLoading, dataOptParams]);
+    if (simulatedData) {
+      toast.dismiss(toastId);
+      toast.success("Parameter Estimation Performed Successfully");
+    }
+  }, [loading, error, simulatedData]);
 
   return (
     <MainPanelContainerStyled>
       <PlotContainerStyled>
-        <Plot data={plotData} layout={LAYOUT} />
-      </PlotContainerStyled>
+        <Plot
+          data={getPlotExperimentalData(experimentalData)}
+          layout={LAYOUT}
+        />
 
-      {/* {plotUrl && (
-        <ResultsContainerStyled>
-          <IframeStyled
-            src={plotUrl}
-            title="Comparison"
-            // width="60%"
-            height="500px"
-          ></IframeStyled>
-          <TableStyled>
-            <thead>
-              <tr>
-                <th>Kinetic Parameter</th>
-                <th>Optimal value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bestParams.map((p, index) => (
-                <tr key={index}>
-                  <td>{BEST_PARAMS_NAMES[index]}</td>
-                  <td>{p}</td>
-                </tr>
-              ))}
-            </tbody>
-          </TableStyled>
-        </ResultsContainerStyled>
-      )} */}
+        {simulatedData && (
+          <Plot
+            data={getCombinedPlotData(experimentalData, simulatedData)}
+            layout={{
+              ...LAYOUT,
+              title: `Experimental Data and Simulation with Optimal Parameters using ${model_type} Model`,
+            }}
+          />
+        )}
+      </PlotContainerStyled>
     </MainPanelContainerStyled>
   );
 }
-
-const getPlotData = (data) => {
+const getPlotExperimentalData = (data) => {
   const plotData = [
     {
       x: data.t,
@@ -191,52 +108,62 @@ const getPlotData = (data) => {
   return plotData;
 };
 
-// const getBestParams = (bestParams) => {
-//   const newBestParams = bestParams.map((p) => p.toFixed(3));
-
-//   return newBestParams;
-// };
-
 export default MainPanelOptimization;
 
-// const getTableData = (data) => {
-//   const formattedData = {
-//     t: [],
-//     x: [],
-//     s: [],
-//     p: [],
-//   };
+const getCombinedPlotData = (experimentalData, simulatedData) => {
+  const experimentalPlotData = [
+    {
+      x: experimentalData.t,
+      y: experimentalData.x,
+      type: "scatter",
+      mode: "markers",
+      name: "Experimental X vs t",
+      marker: { color: "blue" },
+    },
+    {
+      x: experimentalData.t,
+      y: experimentalData.s,
+      type: "scatter",
+      mode: "markers",
+      name: "Experimental S vs t",
+      marker: { color: "red" },
+    },
+    {
+      x: experimentalData.t,
+      y: experimentalData.p,
+      type: "scatter",
+      mode: "markers",
+      name: "Experimental P vs t",
+      marker: { color: "green" },
+    },
+  ];
 
-//   for (let i = 0; i < data.t.length; i++) {
-//     formattedData.t.push(data.t[i]);
-//     formattedData.x.push(parseFloat(data.x[i].toFixed(3)));
-//     formattedData.s.push(parseFloat(data.s[i].toFixed(3)));
-//     formattedData.p.push(parseFloat(data.p[i].toFixed(3)));
-//   }
+  const simulatedPlotData = [
+    {
+      x: simulatedData.t,
+      y: simulatedData.x,
+      type: "scatter",
+      mode: "lines",
+      name: "Simulated X vs t",
+      line: { color: "blue", dash: "dot" },
+    },
+    {
+      x: simulatedData.t,
+      y: simulatedData.s,
+      type: "scatter",
+      mode: "lines",
+      name: "Simulated S vs t",
+      line: { color: "red", dash: "dot" },
+    },
+    {
+      x: simulatedData.t,
+      y: simulatedData.p,
+      type: "scatter",
+      mode: "lines",
+      name: "Simulated P vs t",
+      line: { color: "green", dash: "dot" },
+    },
+  ];
 
-//   return formattedData;
-// };
-
-/* {tableData && (
-          <TableDataStyled>
-            <thead>
-              <tr>
-                <th>Time (h)</th>
-                <th>Biomass (g/L)</th>
-                <th>Substrate (g/L)</th>
-                <th>Product (g/L)</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {tableData.t.map((value, index) => (
-                <tr key={index}>
-                  <td>{value}</td>
-                  <td>{tableData.x[index]}</td>
-                  <td>{tableData.s[index]}</td>
-                  <td>{tableData.p[index]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </TableDataStyled>
-        )} */
+  return [...experimentalPlotData, ...simulatedPlotData];
+};
